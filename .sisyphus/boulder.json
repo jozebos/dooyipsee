@@ -1,6 +1,16 @@
 {
   "active_plan": "/Users/macbookair/Documents/dooyipsee/.sisyphus/plans/dooyipsee.md",
   "started_at": "2026-04-17T03:28:51.132Z",
-  "session_ids": ["ses_2680e4bccffeyMrKeVIm9bcyvq"],
-  "plan_name": "dooyipsee"
+  "session_ids": [
+    "ses_2680e4bccffeyMrKeVIm9bcyvq",
+    "ses_267a5d5dfffekI6tr6asHDPVfE",
+    "ses_267a5bccaffeehkISSvRQ26J1O"
+  ],
+  "plan_name": "dooyipsee",
+  "session_origins": {
+    "ses_2680e4bccffeyMrKeVIm9bcyvq": "direct",
+    "ses_267a5d5dfffekI6tr6asHDPVfE": "appended",
+    "ses_267a5bccaffeehkISSvRQ26J1O": "appended"
+  },
+  "task_sessions": {}
 }

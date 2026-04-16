@@ -65,6 +65,7 @@ export async function generateMetadata({
       title,
       description,
       type: "article",
+      images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
     },
   };
 }

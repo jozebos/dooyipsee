@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getCharacterById } from "@/src/data/ai-characters";
 import { getSpreadById } from "@/src/data/spreads";
+import { getAllCards } from "@/src/data/tarot-cards";
 import type { TarotCard } from "@/src/data/tarot-cards";
 
 interface CardInput {
@@ -155,8 +156,12 @@ function validateRequest(
     return { ok: false, error: "Invalid characterId" };
   }
 
-  if (!Array.isArray(b.cards) || b.cards.length === 0) {
-    return { ok: false, error: "cards must be a non-empty array" };
+  const spread = getSpreadById(b.spreadType as string);
+  if (!Array.isArray(b.cards) || b.cards.length !== spread!.cardCount) {
+    return {
+      ok: false,
+      error: `Expected ${spread!.cardCount} cards for ${b.spreadType}`,
+    };
   }
 
   for (const card of b.cards) {
@@ -172,6 +177,20 @@ function validateRequest(
           "Each card must have id (string) and position (upright | reversed)",
       };
     }
+  }
+
+  // Validate card IDs exist in tarot deck
+  const allCards = getAllCards();
+  for (const card of b.cards as CardInput[]) {
+    if (!allCards.find((c) => c.id === card.id)) {
+      return { ok: false, error: `Card ID "${card.id}" not found in deck` };
+    }
+  }
+
+  // Validate no duplicate cards
+  const cardIds = (b.cards as CardInput[]).map((c) => c.id);
+  if (new Set(cardIds).size !== cardIds.length) {
+    return { ok: false, error: "Duplicate card IDs not allowed" };
   }
 
   if (b.question !== undefined) {

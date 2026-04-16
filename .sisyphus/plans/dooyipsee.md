@@ -56,7 +56,7 @@ Deploy บน Cloudflare Pages ที่ dooyipsee.com + duyipsee.com
 
 ### Phase 8: Final Integration & Deploy
 - [x] T21: End-to-end integration testing. Verify: (1) Homepage loads with all 3 spread options, (2) Reading flow works for all 3 spread types, (3) AI streaming works with all 3 characters, (4) All 78 card detail pages render correctly, (5) Blog index + all 10 articles render, (6) Sitemap has 90+ URLs, (7) Mobile responsive on 375px width, (8) Card flip animations smooth. Fix any issues found.
-- [ ] T22: Create GitHub repo, commit all code, push. Deploy final version to Cloudflare Pages. Verify dooyipsee.com works end-to-end. Verify duyipsee.com redirects to dooyipsee.com. Verify SSL on both domains.
+- [x] T22: Create GitHub repo, commit all code, push. Deploy final version to Cloudflare Pages. Verify dooyipsee.com works end-to-end. Verify duyipsee.com redirects to dooyipsee.com. Verify SSL on both domains.
 
 ## Final Verification Wave
 - [ ] F1: Oracle review — verify all acceptance criteria met, code quality, no security issues (API key exposure, XSS, etc.)

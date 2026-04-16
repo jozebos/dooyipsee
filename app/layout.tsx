@@ -31,6 +31,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "th_TH",
     siteName: "ดูอิปซี",
+    url: "https://dooyipsee.com",
   },
   twitter: {
     card: "summary_large_image",
