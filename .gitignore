@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+
+# opennext
+.open-next/
+
+# wrangler
+.wrangler/
+
+# env files
+.env*.local
+
+# misc
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
