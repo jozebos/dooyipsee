@@ -516,11 +516,11 @@ function CardMeaningsDisplay({
             <div className="flex items-start gap-4">
               <div className="shrink-0">
                 <div className="relative w-[72px] h-[108px] md:w-20 md:h-[120px] rounded-lg overflow-hidden shadow-[var(--shadow-cosmic)] border border-cosmic-600/50">
-                  <img
-                    src={`/cards/${card.id}.png`}
-                    alt={card.nameTh}
-                    className="w-full h-full object-cover"
-                  />
+                   <img
+                     src={`/cards/${card.id}.webp`}
+                     alt={card.nameTh}
+                     className="w-full h-full object-cover"
+                   />
                   {!isUpright && (
                     <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[9px] font-medium text-red-300/90 bg-red-900/70 px-1.5 py-px rounded-full backdrop-blur-sm">
                       กลับด้าน

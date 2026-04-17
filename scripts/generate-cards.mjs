@@ -56,12 +56,12 @@ const cards = [];
 
 // Major Arcana
 majorNames.forEach(([nameEn, nameTh, desc], i) => {
-  cards.push({
-    filename: `major-${String(i).padStart(2, '0')}.png`,
-    nameEn, nameTh,
-    prompt: `Generate a tarot card illustration: "${nameEn}" (${nameTh}). ${STYLE}. Card imagery: ${desc}. The card name "${nameEn}" elegantly written at the bottom of the card.`,
-  });
-});
+   cards.push({
+     filename: `major-${String(i).padStart(2, '0')}.webp`,
+     nameEn, nameTh,
+     prompt: `Generate a tarot card illustration: "${nameEn}" (${nameTh}). ${STYLE}. Card imagery: ${desc}. The card name "${nameEn}" elegantly written at the bottom of the card.`,
+   });
+ });
 
 // Minor Arcana
 for (const [suit, info] of Object.entries(suits)) {
@@ -77,26 +77,26 @@ for (const [suit, info] of Object.entries(suits)) {
     else if (num === 'King') desc += ', seated king with suit symbol, commanding presence';
     
     cards.push({
-      filename: `${suit}-${String(numVal).padStart(2, '0')}.png`,
-      nameEn, nameTh,
-      prompt: `Generate a tarot card illustration: "${nameEn}" (${nameTh}). ${STYLE}. Card imagery: ${desc}. The card name "${nameEn}" elegantly written at the bottom.`,
-    });
+       filename: `${suit}-${String(numVal).padStart(2, '0')}.webp`,
+       nameEn, nameTh,
+       prompt: `Generate a tarot card illustration: "${nameEn}" (${nameTh}). ${STYLE}. Card imagery: ${desc}. The card name "${nameEn}" elegantly written at the bottom.`,
+     });
   });
 }
 
 // Card back
 cards.push({
-  filename: 'card-back.png',
-  nameEn: 'Card Back', nameTh: 'หลังไพ่',
-  prompt: `Design an ornate tarot card back. ${STYLE}. Symmetrical mandala design with moons stars and mystical symbols. The text "ดูยิปซี" subtly integrated. Rich mysterious and elegant.`,
-});
+   filename: 'card-back.webp',
+   nameEn: 'Card Back', nameTh: 'หลังไพ่',
+   prompt: `Design an ornate tarot card back. ${STYLE}. Symmetrical mandala design with moons stars and mystical symbols. The text "ดูยิปซี" subtly integrated. Rich mysterious and elegant.`,
+ });
 
 // Mascot
 cards.push({
-  filename: 'mascot.png',
-  nameEn: 'Mascot', nameTh: 'มาสคอต',
-  prompt: `A cute mystical owl fortune teller mascot character. Dark purple violet cosmic theme. The owl wears a small wizard hat with stars, has large wise glowing purple eyes, holds a tiny tarot card. Chibi kawaii style but mystical. Starry cosmic purple background.`,
-});
+   filename: 'mascot.webp',
+   nameEn: 'Mascot', nameTh: 'มาสคอต',
+   prompt: `A cute mystical owl fortune teller mascot character. Dark purple violet cosmic theme. The owl wears a small wizard hat with stars, has large wise glowing purple eyes, holds a tiny tarot card. Chibi kawaii style but mystical. Starry cosmic purple background.`,
+ });
 
 async function generateImage(prompt) {
   // Use curl via child_process because Node.js fetch has IPv6 timeout issues on this machine

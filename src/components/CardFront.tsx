@@ -9,10 +9,10 @@ export function CardFront({ card, position }: CardFrontProps) {
   return (
     <div className="relative flex w-[120px] h-[180px] md:w-[140px] md:h-[210px] flex-col overflow-hidden rounded-[var(--radius-card)]">
       <img
-        src={`/cards/${card.id}.png`}
-        alt={card.nameTh}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
+         src={`/cards/${card.id}.webp`}
+         alt={card.nameTh}
+         className="absolute inset-0 w-full h-full object-cover"
+       />
 
       <div className="absolute inset-0 border border-white/10 rounded-[var(--radius-card)] pointer-events-none" />
 

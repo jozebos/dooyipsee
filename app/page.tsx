@@ -96,23 +96,23 @@ function FloatingCardFan({
         const rotation = (i - (total - 1) / 2) * 8;
         const translateY = Math.abs(i - (total - 1) / 2) * 8;
         return (
-          <div
-            key={cardId}
-            className="card-fan-item -ml-3 w-12 first:ml-0 sm:w-16 md:w-20 lg:w-24"
-            style={
-              {
-                "--fan-rotate": `${rotation}deg`,
-                "--fan-ty": `${translateY}px`,
-                zIndex: i,
-              } as React.CSSProperties
-            }
-          >
-            <img
-              src={`/cards/${cardId}.png`}
-              alt=""
-              className="w-full rounded-lg shadow-lg shadow-cosmic-900/50"
-              loading="lazy"
-            />
+           <div
+             key={cardId}
+             className="card-fan-item -ml-3 w-12 first:ml-0 sm:w-16 md:w-20 lg:w-24"
+             style={
+               {
+                 "--fan-rotate": `${rotation}deg`,
+                 "--fan-ty": `${translateY}px`,
+                 zIndex: i,
+               } as React.CSSProperties
+             }
+           >
+             <img
+               src={`/cards/${cardId}.webp`}
+               alt=""
+               className="w-full rounded-lg shadow-lg shadow-cosmic-900/50"
+               loading="lazy"
+             />
           </div>
         );
       })}
@@ -123,13 +123,13 @@ function FloatingCardFan({
 function SpreadHeaderVisual({ cards }: { cards: readonly string[] }) {
   if (cards.length === 1) {
     return (
-      <div className="flex h-full items-center justify-center">
-        <img
-          src={`/cards/${cards[0]}.png`}
-          alt=""
-          className="h-32 w-auto rounded-md shadow-lg shadow-cosmic-900/60 drop-shadow-[0_0_15px_rgba(251,191,36,0.15)]"
-          loading="lazy"
-        />
+       <div className="flex h-full items-center justify-center">
+         <img
+           src={`/cards/${cards[0]}.webp`}
+           alt=""
+           className="h-32 w-auto rounded-md shadow-lg shadow-cosmic-900/60 drop-shadow-[0_0_15px_rgba(251,191,36,0.15)]"
+           loading="lazy"
+         />
       </div>
     );
   }
@@ -141,20 +141,20 @@ function SpreadHeaderVisual({ cards }: { cards: readonly string[] }) {
         const rotation = (i - (total - 1) / 2) * 12;
         const translateY = Math.abs(i - (total - 1) / 2) * 6;
         return (
-          <div
-            key={cardId}
-            className="-ml-4 first:ml-0"
-            style={{
-              transform: `rotate(${rotation}deg) translateY(${translateY}px)`,
-              zIndex: i,
-            }}
-          >
-            <img
-              src={`/cards/${cardId}.png`}
-              alt=""
-              className="h-28 w-auto rounded-md shadow-md shadow-cosmic-900/60"
-              loading="lazy"
-            />
+           <div
+             key={cardId}
+             className="-ml-4 first:ml-0"
+             style={{
+               transform: `rotate(${rotation}deg) translateY(${translateY}px)`,
+               zIndex: i,
+             }}
+           >
+             <img
+               src={`/cards/${cardId}.webp`}
+               alt=""
+               className="h-28 w-auto rounded-md shadow-md shadow-cosmic-900/60"
+               loading="lazy"
+             />
           </div>
         );
       })}
@@ -173,14 +173,7 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,rgba(139,92,246,0.1),transparent_70%)]" />
 
         <div className="relative z-10 flex flex-col items-center gap-5">
-          {/* Mascot — accent size */}
-          <div className="animate-float">
-            <img
-              src="/cards/mascot.png"
-              alt="ดูยิปซี มาสคอต"
-              className="h-20 w-20 drop-shadow-[0_0_20px_rgba(139,92,246,0.4)] sm:h-24 sm:w-24"
-            />
-          </div>
+
 
           {/* Title */}
           <h1 className="text-glow text-5xl font-bold tracking-tight text-cosmic-100 sm:text-6xl md:text-7xl lg:text-8xl">
@@ -286,18 +279,18 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06),transparent_60%)]" />
 
         {/* Decorative card-backs */}
-        <img
-          src="/cards/card-back.png"
-          alt=""
-          className="pointer-events-none absolute -left-10 top-1/2 w-32 -translate-y-1/2 -rotate-12 opacity-[0.07] blur-[1px] sm:-left-4 sm:w-40 sm:opacity-10"
-          loading="lazy"
-        />
-        <img
-          src="/cards/card-back.png"
-          alt=""
-          className="pointer-events-none absolute -right-10 top-1/2 w-32 -translate-y-1/2 rotate-12 opacity-[0.07] blur-[1px] sm:-right-4 sm:w-40 sm:opacity-10"
-          loading="lazy"
-        />
+         <img
+           src="/cards/card-back.webp"
+           alt=""
+           className="pointer-events-none absolute -left-10 top-1/2 w-32 -translate-y-1/2 -rotate-12 opacity-[0.07] blur-[1px] sm:-left-4 sm:w-40 sm:opacity-10"
+           loading="lazy"
+         />
+         <img
+           src="/cards/card-back.webp"
+           alt=""
+           className="pointer-events-none absolute -right-10 top-1/2 w-32 -translate-y-1/2 rotate-12 opacity-[0.07] blur-[1px] sm:-right-4 sm:w-40 sm:opacity-10"
+           loading="lazy"
+         />
 
         <div className="relative z-10 mx-auto max-w-lg text-center">
           <h2 className="text-2xl font-semibold text-cosmic-100 sm:text-3xl">
@@ -385,13 +378,13 @@ export default function Home() {
             className="surface-card group overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
           >
             {/* Card imagery header */}
-            <div className="relative h-32 overflow-hidden">
-              <img
-                src="/cards/major-01.png"
-                alt=""
-                className="h-full w-full object-cover object-top opacity-30 transition-opacity duration-300 group-hover:opacity-40"
-                loading="lazy"
-              />
+             <div className="relative h-32 overflow-hidden">
+               <img
+                 src="/cards/major-01.webp"
+                 alt=""
+                 className="h-full w-full object-cover object-top opacity-30 transition-opacity duration-300 group-hover:opacity-40"
+                 loading="lazy"
+               />
               <div className="absolute inset-0 bg-gradient-to-t from-cosmic-800 via-cosmic-800/60 to-transparent" />
             </div>
             <div className="p-5">
@@ -409,12 +402,12 @@ export default function Home() {
             className="surface-card group overflow-hidden transition-all duration-300 hover:-translate-y-0.5"
           >
             <div className="relative h-32 overflow-hidden">
-              <img
-                src="/cards/major-09.png"
-                alt=""
-                className="h-full w-full object-cover object-top opacity-30 transition-opacity duration-300 group-hover:opacity-40"
-                loading="lazy"
-              />
+               <img
+                 src="/cards/major-09.webp"
+                 alt=""
+                 className="h-full w-full object-cover object-top opacity-30 transition-opacity duration-300 group-hover:opacity-40"
+                 loading="lazy"
+               />
               <div className="absolute inset-0 bg-gradient-to-t from-cosmic-800 via-cosmic-800/60 to-transparent" />
             </div>
             <div className="p-5">

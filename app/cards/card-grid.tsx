@@ -40,11 +40,11 @@ function CardTile({ card }: { card: CardItem }) {
       className="surface-card group flex flex-col items-center gap-2 p-3 text-center transition-all duration-300 hover:-translate-y-1 sm:gap-3 sm:p-4"
     >
       <img
-        src={`/cards/${card.id}.png`}
-        alt={card.nameTh}
-        loading="lazy"
-        className="w-full aspect-[2/3] object-cover rounded-lg"
-      />
+         src={`/cards/${card.id}.webp`}
+         alt={card.nameTh}
+         loading="lazy"
+         className="w-full aspect-[2/3] object-cover rounded-lg"
+       />
       <p className="line-clamp-2 text-xs font-medium leading-tight text-cosmic-100 group-hover:text-gold-400 transition-colors sm:text-sm">
         {card.nameTh}
       </p>

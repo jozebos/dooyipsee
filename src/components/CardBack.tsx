@@ -31,10 +31,10 @@ export function CardBack({ onClick, selected, disabled }: CardBackProps) {
       aria-label="เลือกไพ่"
     >
       <img
-        src="/cards/card-back.png"
-        alt="ไพ่ทาโร่"
-        className="w-full h-full object-cover rounded-[var(--radius-card)]"
-      />
+         src="/cards/card-back.webp"
+         alt="ไพ่ทาโร่"
+         className="w-full h-full object-cover rounded-[var(--radius-card)]"
+       />
 
       {/* Shimmer overlay on hover */}
       {!disabled && (
