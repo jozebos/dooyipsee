@@ -31,7 +31,7 @@ export function CardBack({ onClick, selected, disabled }: CardBackProps) {
       aria-label="เลือกไพ่"
     >
       <img
-         src="/cards/card-back.webp"
+         src="/cards/classic/card-back.webp"
          alt="ไพ่ทาโร่"
          className="w-full h-full object-cover rounded-[var(--radius-card)]"
        />

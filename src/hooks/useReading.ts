@@ -6,13 +6,15 @@ interface ReadingParams {
   spreadType: string;
   cards: { id: string; position: "upright" | "reversed" }[];
   question?: string;
-  characterId: string;
+  personaId: string;
+  deckId?: string;
 }
 
 export function useReading() {
   const [reading, setReading] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [readingId, setReadingId] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   const startReading = useCallback(async (params: ReadingParams) => {
@@ -23,6 +25,7 @@ export function useReading() {
     setReading("");
     setIsLoading(true);
     setError(null);
+    setReadingId(null);
 
     try {
       const response = await fetch("/api/reading", {
@@ -37,6 +40,11 @@ export function useReading() {
         throw new Error(
           body?.error ?? `เกิดข้อผิดพลาด (${response.status})`,
         );
+      }
+
+      const headerReadingId = response.headers.get("X-Reading-Id");
+      if (headerReadingId) {
+        setReadingId(headerReadingId);
       }
 
       if (!response.body) {
@@ -67,6 +75,9 @@ export function useReading() {
 
           try {
             const parsed = JSON.parse(data);
+            if (parsed.readingId) {
+              setReadingId(parsed.readingId);
+            }
             if (parsed.content) {
               setReading((prev) => prev + parsed.content);
             }
@@ -86,5 +97,5 @@ export function useReading() {
     }
   }, []);
 
-  return { reading, isLoading, error, startReading };
+  return { reading, isLoading, error, readingId, startReading };
 }

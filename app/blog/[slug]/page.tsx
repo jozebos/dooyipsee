@@ -62,24 +62,65 @@ function BlogHeroImage({
   );
 }
 
+function renderInline(text: string): React.ReactNode {
+  // Handle **bold**
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={i} className="font-semibold text-cosmic-100">{part.slice(2, -2)}</strong>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
 function BlogContent({ content }: { content: string }) {
   return (
     <div className="prose-cosmic space-y-4">
-      {content.split("\n\n").map((paragraph, i) => {
-        if (paragraph.trim().startsWith("<img")) {
+      {content.split("\n\n").map((block, i) => {
+        const trimmed = block.trim();
+        
+        // Handle headings
+        if (trimmed.startsWith("## ")) {
+          return <h2 key={i} className="mt-8 mb-3 text-xl font-bold text-cosmic-100 first:mt-0">{trimmed.slice(3)}</h2>;
+        }
+        if (trimmed.startsWith("### ")) {
+          return <h3 key={i} className="mt-6 mb-2 text-lg font-semibold text-gold-400">{trimmed.slice(4)}</h3>;
+        }
+        
+        // Handle divider
+        if (trimmed === "---") {
+          return <hr key={i} className="my-6 border-cosmic-600/50" />;
+        }
+        
+        // Handle image tags
+        if (trimmed.startsWith("<img")) {
           return (
             <figure key={i} className="my-6">
-              <div
-                className="overflow-hidden rounded-lg"
-                dangerouslySetInnerHTML={{ __html: paragraph.trim() }}
-              />
+              <div className="overflow-hidden rounded-lg" dangerouslySetInnerHTML={{ __html: trimmed }} />
             </figure>
           );
         }
-
+        
+        // Handle list blocks (lines starting with - or •)
+        const lines = trimmed.split("\n");
+        if (lines.every(line => line.match(/^[-•*]\s/) || line.trim() === "")) {
+          return (
+            <ul key={i} className="my-4 space-y-2 pl-1">
+              {lines.filter(l => l.trim()).map((line, j) => (
+                <li key={j} className="flex gap-2.5 text-cosmic-200/80">
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-mystic-purple/60" />
+                  <span className="leading-relaxed">{renderInline(line.replace(/^[-•*]\s*/, ""))}</span>
+                </li>
+              ))}
+            </ul>
+          );
+        }
+        
+        // Regular paragraph
         return (
-          <p key={i} className="leading-relaxed text-cosmic-200/80">
-            {paragraph}
+          <p key={i} className="leading-[1.8] text-cosmic-200/80">
+            {renderInline(trimmed.replace(/\n/g, " "))}
           </p>
         );
       })}
@@ -162,7 +203,7 @@ export default async function BlogPostPage({
 
         <BlogHeroImage imagePath={post.imagePath} title={post.title} />
 
-        <div className="surface-card p-5 sm:p-8">
+        <div className="surface-card p-6 sm:p-10">
           <BlogContent content={post.content} />
         </div>
 

@@ -133,7 +133,7 @@ export default async function CardDetailPage({
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
              <div className="w-40 shrink-0 sm:w-48">
                <img
-                 src={`/cards/${card.id}.webp`}
+                 src={`/cards/classic/${card.id}.webp`}
                  alt={card.nameTh}
                  className="w-full aspect-[2/3] object-cover rounded-xl ring-1 ring-white/10"
                />

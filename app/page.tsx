@@ -39,43 +39,61 @@ const spreads = [
   },
 ] as const;
 
-const characters = [
-  {
-    name: "ท่านดาวเทพ",
-    title: "นักปราชญ์แห่งดวงดาว",
-    bio: "ผู้หยั่งรู้ที่ใช้พลังจักรวาลในการทำนาย ให้คำตอบลึกซึ้ง ตรงประเด็น ด้วยภาษาที่สง่างาม",
-    emoji: "🌟",
-    topBorder: "border-t-indigo-400",
-    accent: "text-indigo-400",
-    bg: "bg-indigo-500/10",
-  },
+const fortuneTellers = [
   {
     name: "แม่หมอจันทรา",
     title: "แม่หมอผู้เมตตา",
     bio: "อ่านไพ่ด้วยสัญชาตญาณและความเมตตา เหมือนคุยกับคนรู้ใจ อบอุ่น ให้กำลังใจ",
-    emoji: "🔮",
+    emoji: "🌙",
     topBorder: "border-t-purple-400",
     accent: "text-purple-400",
     bg: "bg-purple-500/10",
   },
   {
+    name: "อาจารย์ดาวเทพ",
+    title: "นักพยากรณ์แห่งดวงดาว",
+    bio: "ผู้หยั่งรู้ที่ใช้พลังจักรวาลในการทำนาย ให้คำตอบลึกซึ้ง ตรงประเด็น ด้วยภาษาที่สง่างาม",
+    emoji: "🌌",
+    topBorder: "border-t-indigo-400",
+    accent: "text-indigo-400",
+    bg: "bg-indigo-500/10",
+  },
+  {
     name: "น้องมิสติก",
-    title: "นักพยากรณ์รุ่นใหม่",
+    title: "นักดูดวงรุ่นใหม่",
     bio: "สดใส ตรงไปตรงมา พูดภาษาวัยรุ่น ทำนายแบบเพื่อนคุย สนุก ไม่เครียด",
-    emoji: "✨",
+    emoji: "⚡",
     topBorder: "border-t-gold-400",
     accent: "text-gold-400",
     bg: "bg-gold-400/10",
+  },
+  {
+    name: "คุณยายทิพย์",
+    title: "คุณยายผู้มีญาณทิพย์",
+    bio: "พูดอบอุ่น เหมือนคุณยายเล่าให้ฟัง ให้คำแนะนำแบบผู้ใหญ่ที่ห่วงใย",
+    emoji: "🔮",
+    topBorder: "border-t-rose-400",
+    accent: "text-rose-400",
+    bg: "bg-rose-500/10",
+  },
+  {
+    name: "หมอเทพ ดิจิตอล",
+    title: "หมอดูยุคใหม่",
+    bio: "ผสมศาสตร์โบราณกับมุมมองสมัยใหม่ พูดจา smart เข้าใจง่าย",
+    emoji: "💫",
+    topBorder: "border-t-cyan-400",
+    accent: "text-cyan-400",
+    bg: "bg-cyan-500/10",
   },
 ] as const;
 
 const features = [
   { icon: "💎", title: "ฟรี 100%", description: "ไม่มีค่าใช้จ่าย ไม่ต้องสมัคร" },
-  { icon: "🤖", title: "AI ทำนาย", description: "ตีความไพ่ด้วย AI อัจฉริยะ" },
+  { icon: "🔮", title: "ทำนายแม่นยำ", description: "ตีความไพ่โดยหมอดูผู้เชี่ยวชาญ" },
   { icon: "🃏", title: "ไพ่ครบ 78 ใบ", description: "Major & Minor Arcana" },
   {
     icon: "🧙",
-    title: "เลือกนักพยากรณ์",
+    title: "เลือกหมอดู",
     description: "สลับสไตล์การทำนาย",
   },
 ] as const;
@@ -108,12 +126,12 @@ function FloatingCardFan({
              }
            >
              <img
-               src={`/cards/${cardId}.webp`}
-               alt=""
-               className="w-full rounded-lg shadow-lg shadow-cosmic-900/50"
-               loading="lazy"
-             />
-          </div>
+              src={`/cards/classic/${cardId}.webp`}
+                alt=""
+                className="w-full rounded-lg shadow-lg shadow-cosmic-900/50"
+                loading="lazy"
+              />
+           </div>
         );
       })}
     </div>
@@ -125,7 +143,7 @@ function SpreadHeaderVisual({ cards }: { cards: readonly string[] }) {
     return (
        <div className="flex h-full items-center justify-center">
          <img
-           src={`/cards/${cards[0]}.webp`}
+           src={`/cards/classic/${cards[0]}.webp`}
            alt=""
            className="h-32 w-auto rounded-md shadow-lg shadow-cosmic-900/60 drop-shadow-[0_0_15px_rgba(251,191,36,0.15)]"
            loading="lazy"
@@ -150,9 +168,9 @@ function SpreadHeaderVisual({ cards }: { cards: readonly string[] }) {
              }}
            >
              <img
-               src={`/cards/${cardId}.webp`}
-               alt=""
-               className="h-28 w-auto rounded-md shadow-md shadow-cosmic-900/60"
+              src={`/cards/classic/${cardId}.webp`}
+                alt=""
+                className="h-28 w-auto rounded-md shadow-md shadow-cosmic-900/60"
                loading="lazy"
              />
           </div>
@@ -182,7 +200,7 @@ export default function Home() {
 
           {/* Subtitle */}
           <p className="max-w-md text-lg font-light text-cosmic-200 sm:text-xl">
-            ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายด้วย AI
+            ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายโดยหมอดู
           </p>
 
           {/* Floating tarot card fan */}
@@ -279,16 +297,16 @@ export default function Home() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.06),transparent_60%)]" />
 
         {/* Decorative card-backs */}
-         <img
-           src="/cards/card-back.webp"
-           alt=""
-           className="pointer-events-none absolute -left-10 top-1/2 w-32 -translate-y-1/2 -rotate-12 opacity-[0.07] blur-[1px] sm:-left-4 sm:w-40 sm:opacity-10"
-           loading="lazy"
-         />
-         <img
-           src="/cards/card-back.webp"
-           alt=""
-           className="pointer-events-none absolute -right-10 top-1/2 w-32 -translate-y-1/2 rotate-12 opacity-[0.07] blur-[1px] sm:-right-4 sm:w-40 sm:opacity-10"
+          <img
+            src="/cards/classic/card-back.webp"
+            alt=""
+            className="pointer-events-none absolute -left-10 top-1/2 w-32 -translate-y-1/2 -rotate-12 opacity-[0.07] blur-[1px] sm:-left-4 sm:w-40 sm:opacity-10"
+            loading="lazy"
+          />
+          <img
+            src="/cards/classic/card-back.webp"
+            alt=""
+            className="pointer-events-none absolute -right-10 top-1/2 w-32 -translate-y-1/2 rotate-12 opacity-[0.07] blur-[1px] sm:-right-4 sm:w-40 sm:opacity-10"
            loading="lazy"
          />
 
@@ -297,7 +315,7 @@ export default function Home() {
             อยากเปิดไพ่เลย?
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-cosmic-200/70 sm:text-base">
-            ไม่ต้องตั้งคำถาม ไม่ต้องเลือกนักพยากรณ์
+            ไม่ต้องตั้งคำถาม ไม่ต้องเลือกหมอดู
             แค่เลือกไพ่แล้วเปิดเลย
           </p>
           <Link
@@ -309,30 +327,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Section 4: AI Characters ── */}
+      {/* ── Section 4: Fortune Tellers ── */}
       <section className="relative px-4 py-20 sm:py-28">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(139,92,246,0.05),transparent_60%)]" />
 
         <div className="relative mx-auto max-w-5xl">
           <h2 className="mb-10 text-center text-2xl font-semibold text-cosmic-100 sm:mb-14 sm:text-3xl">
-            พบกับนักพยากรณ์ AI
+            พบกับหมอดูของเรา
           </h2>
 
-          <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
-            {characters.map((char) => (
+          <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-5 sm:gap-6">
+            {fortuneTellers.map((ft) => (
               <div
-                key={char.name}
-                className={`rounded-[var(--radius-card)] border border-cosmic-700/30 border-t-2 ${char.topBorder} ${char.bg} p-6 text-center transition-all duration-300 hover:shadow-cosmic sm:p-7`}
+                key={ft.name}
+                className={`rounded-[var(--radius-card)] border border-cosmic-700/30 border-t-2 ${ft.topBorder} ${ft.bg} p-6 text-center transition-all duration-300 hover:shadow-cosmic sm:p-7`}
               >
-                <span className="text-4xl">{char.emoji}</span>
-                <h3 className={`mt-3 text-lg font-bold ${char.accent}`}>
-                  {char.name}
+                <span className="text-4xl">{ft.emoji}</span>
+                <h3 className={`mt-3 text-lg font-bold ${ft.accent}`}>
+                  {ft.name}
                 </h3>
                 <p className="mt-1 text-xs font-medium uppercase tracking-wider text-cosmic-200/50">
-                  {char.title}
+                  {ft.title}
                 </p>
                 <p className="mt-3 text-sm leading-relaxed text-cosmic-200/70">
-                  {char.bio}
+                  {ft.bio}
                 </p>
               </div>
             ))}
@@ -380,7 +398,7 @@ export default function Home() {
             {/* Card imagery header */}
              <div className="relative h-32 overflow-hidden">
                <img
-                 src="/cards/major-01.webp"
+                  src="/cards/classic/major-01.webp"
                  alt=""
                  className="h-full w-full object-cover object-top opacity-30 transition-opacity duration-300 group-hover:opacity-40"
                  loading="lazy"
@@ -403,7 +421,7 @@ export default function Home() {
           >
             <div className="relative h-32 overflow-hidden">
                <img
-                 src="/cards/major-09.webp"
+                  src="/cards/classic/major-09.webp"
                  alt=""
                  className="h-full w-full object-cover object-top opacity-30 transition-opacity duration-300 group-hover:opacity-40"
                  loading="lazy"

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Thai } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
@@ -10,20 +10,27 @@ const notoSansThai = Noto_Sans_Thai({
   variable: "--font-sans",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://dooyipsee.com"),
   title: {
     template: "%s | ดูยิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี",
-    default: "ดูยิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายด้วย AI",
+    default: "ดูยิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายโดยหมอดู",
   },
   description:
-    "ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายด้วย AI ไพ่ทาโร่ 78 ใบ เลือกไพ่เอง สุ่มไพ่ ดูดวงรายวัน อดีต ปัจจุบัน อนาคต เซลติกครอส",
+    "ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายโดยหมอดู ไพ่ทาโร่ 78 ใบ เลือกไพ่เอง สุ่มไพ่ ดูดวงรายวัน อดีต ปัจจุบัน อนาคต เซลติกครอส",
   keywords: [
     "ดูไพ่ยิปซี",
     "ไพ่ทาโร่",
     "ดูดวง",
     "ทำนาย",
-    "AI",
+    "หมอดู",
     "ออนไลน์",
     "ฟรี",
   ],

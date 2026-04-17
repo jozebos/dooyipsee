@@ -1,8 +1,12 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getCharacterById } from "@/src/data/ai-characters";
+import { getPersonaById } from "@/src/data/personas";
 import { getSpreadById } from "@/src/data/spreads";
 import { getAllCards } from "@/src/data/tarot-cards";
 import type { TarotCard } from "@/src/data/tarot-cards";
+import { createReading } from "@/src/server/db";
+import { getOrCreateAnonymousId } from "@/src/server/anonymous";
+
+const MODEL_ID = "google/gemini-2.5-flash";
 
 interface CardInput {
   id: string;
@@ -13,7 +17,8 @@ interface ReadingRequest {
   spreadType: string;
   cards: CardInput[];
   question?: string;
-  characterId: string;
+  personaId: string;
+  deckId?: string;
 }
 
 const rateLimitMap = new Map<string, number[]>();
@@ -38,7 +43,6 @@ const spreadTokenKeyMap: Record<string, "daily" | "threeCard" | "celticCross"> =
     "celtic-cross": "celticCross",
   };
 
-// tarot-cards.ts may not exist yet (created in parallel) — dynamic import with fallback
 let tarotCards: TarotCard[] | null = null;
 
 async function loadTarotCards() {
@@ -152,8 +156,8 @@ function validateRequest(
     return { ok: false, error: "Invalid spreadType" };
   }
 
-  if (typeof b.characterId !== "string" || !getCharacterById(b.characterId)) {
-    return { ok: false, error: "Invalid characterId" };
+  if (typeof b.personaId !== "string" || !getPersonaById(b.personaId)) {
+    return { ok: false, error: "Invalid personaId" };
   }
 
   const spread = getSpreadById(b.spreadType as string);
@@ -179,7 +183,6 @@ function validateRequest(
     }
   }
 
-  // Validate card IDs exist in tarot deck
   const allCards = getAllCards();
   for (const card of b.cards as CardInput[]) {
     if (!allCards.find((c) => c.id === card.id)) {
@@ -187,7 +190,6 @@ function validateRequest(
     }
   }
 
-  // Validate no duplicate cards
   const cardIds = (b.cards as CardInput[]).map((c) => c.id);
   if (new Set(cardIds).size !== cardIds.length) {
     return { ok: false, error: "Duplicate card IDs not allowed" };
@@ -230,11 +232,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
-  const { spreadType, cards, question, characterId } = validation.data;
+  const { spreadType, cards, question, personaId, deckId } = validation.data;
 
-  const character = getCharacterById(characterId)!;
+  const persona = getPersonaById(personaId)!;
   const spread = getSpreadById(spreadType)!;
   const spreadTokenKey = spreadTokenKeyMap[spreadType] ?? "daily";
+  const resolvedDeckId = deckId ?? "classic";
 
   await loadTarotCards();
 
@@ -243,6 +246,9 @@ export async function POST(request: NextRequest) {
     cards,
     question || "การอ่านไพ่ทั่วไป",
   );
+
+  const readingId = crypto.randomUUID();
+  let fullText = "";
 
   try {
     const openRouterResponse = await fetch(
@@ -256,13 +262,13 @@ export async function POST(request: NextRequest) {
           "X-Title": "Dooyipsee Tarot",
         },
         body: JSON.stringify({
-          model: character.modelId,
+          model: MODEL_ID,
           messages: [
-            { role: "system", content: character.systemPrompt },
+            { role: "system", content: persona.systemPrompt },
             { role: "user", content: userPrompt },
           ],
           stream: true,
-          max_tokens: character.maxTokens[spreadTokenKey],
+          max_tokens: persona.maxTokens[spreadTokenKey],
         }),
       },
     );
@@ -270,7 +276,7 @@ export async function POST(request: NextRequest) {
     if (!openRouterResponse.ok || !openRouterResponse.body) {
       const fallback = buildFallbackReading(spread, cards);
       return new Response(createFallbackSSE(fallback), {
-        headers: sseHeaders(),
+        headers: sseHeaders(readingId),
       });
     }
 
@@ -283,6 +289,12 @@ export async function POST(request: NextRequest) {
         let buffer = "";
 
         try {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ readingId })}\n\n`,
+            ),
+          );
+
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -297,6 +309,15 @@ export async function POST(request: NextRequest) {
 
               const data = trimmed.slice(6);
               if (data === "[DONE]") {
+                saveReadingToD1(
+                  readingId,
+                  spreadType,
+                  resolvedDeckId,
+                  personaId,
+                  question,
+                  cards,
+                  fullText,
+                );
                 controller.enqueue(encoder.encode("data: [DONE]\n\n"));
                 controller.close();
                 return;
@@ -306,6 +327,7 @@ export async function POST(request: NextRequest) {
                 const parsed = JSON.parse(data);
                 const content = parsed.choices?.[0]?.delta?.content;
                 if (content) {
+                  fullText += content;
                   controller.enqueue(
                     encoder.encode(`data: ${JSON.stringify({ content })}\n\n`),
                   );
@@ -316,7 +338,15 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Stream ended without explicit [DONE] signal
+          saveReadingToD1(
+            readingId,
+            spreadType,
+            resolvedDeckId,
+            personaId,
+            question,
+            cards,
+            fullText,
+          );
           controller.enqueue(encoder.encode("data: [DONE]\n\n"));
           controller.close();
         } catch {
@@ -326,21 +356,51 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return new Response(stream, { headers: sseHeaders() });
+    return new Response(stream, { headers: sseHeaders(readingId) });
   } catch {
     const fallback = buildFallbackReading(spread, cards);
     return new Response(createFallbackSSE(fallback), {
-      headers: sseHeaders(),
+      headers: sseHeaders(readingId),
     });
   }
 }
 
-function sseHeaders(): HeadersInit {
-  return {
+function saveReadingToD1(
+  readingId: string,
+  spreadType: string,
+  deckId: string,
+  personaId: string,
+  question: string | undefined,
+  cards: CardInput[],
+  fullText: string,
+) {
+  getOrCreateAnonymousId()
+    .then((anonymousId) =>
+      createReading({
+        id: readingId,
+        anonymousId,
+        spreadType,
+        deckId,
+        personaId,
+        question,
+        cardsJson: JSON.stringify(cards),
+        readingText: fullText,
+        readingExcerpt: fullText.slice(0, 200),
+      }),
+    )
+    .catch(() => {});
+}
+
+function sseHeaders(readingId?: string): HeadersInit {
+  const headers: HeadersInit = {
     "Content-Type": "text/event-stream",
     "Cache-Control": "no-cache",
     Connection: "keep-alive",
   };
+  if (readingId) {
+    headers["X-Reading-Id"] = readingId;
+  }
+  return headers;
 }
 
 function createFallbackSSE(text: string): ReadableStream {

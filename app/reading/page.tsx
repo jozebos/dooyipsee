@@ -8,8 +8,10 @@ import { getAllCards } from "@/src/data/tarot-cards";
 import type { TarotCard } from "@/src/data/tarot-cards";
 import { useReading } from "@/src/hooks/useReading";
 import { ReadingDisplay } from "@/src/components/ReadingDisplay";
+import { FeedbackButtons } from "@/src/components/FeedbackButtons";
+import { ShareButtons } from "@/src/components/ShareButtons";
 import { CharacterSelector } from "@/src/components/CharacterSelector";
-import { getCharacterById } from "@/src/data/ai-characters";
+import { getPersonaById } from "@/src/data/personas";
 import { CardSelector } from "@/src/components/CardSelector";
 import { SpreadLayout } from "@/src/components/SpreadLayout";
 
@@ -23,7 +25,7 @@ type Step =
   | "reading"
   | "meanings";
 
-type ReadingMode = "quick" | "ai";
+type ReadingMode = "quick" | "fortune";
 
 interface SelectedCard {
   id: string;
@@ -44,14 +46,14 @@ function ReadingFlow() {
   const [spread, setSpread] = useState<SpreadType | undefined>(resolvedSpread);
   const [mode, setMode] = useState<ReadingMode | null>(null);
   const [question, setQuestion] = useState("");
-  const [characterId, setCharacterId] = useState("");
+  const [personaId, setPersonaId] = useState("");
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
   const [revealedIndices, setRevealedIndices] = useState<Set<number>>(
     new Set()
   );
-  const [wantsAI, setWantsAI] = useState(false);
+  const [wantsFortune, setWantsFortune] = useState(false);
 
-  const { reading, isLoading, error, startReading } = useReading();
+  const { reading, isLoading, error, readingId, startReading } = useReading();
 
   const allCards = getAllCards();
   const resolvedCards: TarotCard[] = selectedCards.map(
@@ -77,7 +79,7 @@ function ReadingFlow() {
   }, []);
 
   const handleCharacterSelect = useCallback((id: string) => {
-    setCharacterId(id);
+    setPersonaId(id);
     setTimeout(() => setStep("cards"), 300);
   }, []);
 
@@ -106,7 +108,8 @@ function ReadingFlow() {
                   position: sc.position,
                 })),
                 question: question || undefined,
-                characterId,
+                personaId,
+                deckId: "classic",
               });
             }
           }, 800);
@@ -115,12 +118,12 @@ function ReadingFlow() {
         return next;
       });
     },
-    [spread, selectedCards, question, characterId, startReading, mode]
+    [spread, selectedCards, question, personaId, startReading, mode]
   );
 
-  const handleMeaningsAISelect = useCallback(
+  const handleMeaningsFortuneSelect = useCallback(
     (id: string) => {
-      setCharacterId(id);
+      setPersonaId(id);
       if (!spread) return;
       startReading({
         spreadType: spread.id,
@@ -129,7 +132,8 @@ function ReadingFlow() {
           position: sc.position,
         })),
         question: question || undefined,
-        characterId: id,
+        personaId: id,
+        deckId: "classic",
       });
     },
     [spread, selectedCards, question, startReading]
@@ -141,18 +145,19 @@ function ReadingFlow() {
       spreadType: spread.id,
       cards: selectedCards.map((sc) => ({ id: sc.id, position: sc.position })),
       question: question || undefined,
-      characterId,
+      personaId,
+      deckId: "classic",
     });
-  }, [spread, selectedCards, question, characterId, startReading]);
+  }, [spread, selectedCards, question, personaId, startReading]);
 
   const handleStartOver = useCallback(() => {
     setStep(resolvedSpread ? "mode" : "spread");
     setMode(null);
     setQuestion("");
-    setCharacterId("");
+    setPersonaId("");
     setSelectedCards([]);
     setRevealedIndices(new Set());
-    setWantsAI(false);
+    setWantsFortune(false);
   }, [resolvedSpread]);
 
   return (
@@ -230,18 +235,22 @@ function ReadingFlow() {
                 isLoading={isLoading}
                 error={error}
                 onRetry={handleRetry}
-                characterName={getCharacterById(characterId)?.name}
+                characterName={getPersonaById(personaId)?.name}
               />
             </div>
 
             {!isLoading && reading && (
-              <button
-                type="button"
-                onClick={handleStartOver}
-                className="btn-cosmic px-8 py-3 text-sm cursor-pointer"
-              >
-                <span>ดูไพ่อีกครั้ง</span>
-              </button>
+              <>
+                <FeedbackButtons readingId={readingId} />
+                <ShareButtons readingId={readingId} />
+                <button
+                  type="button"
+                  onClick={handleStartOver}
+                  className="btn-cosmic px-8 py-3 text-sm cursor-pointer"
+                >
+                  <span>ดูไพ่อีกครั้ง</span>
+                </button>
+              </>
             )}
           </div>
         )}
@@ -265,41 +274,49 @@ function ReadingFlow() {
               spread={spread}
             />
 
-            {!wantsAI ? (
+            {!wantsFortune ? (
               <div className="flex flex-col items-center gap-4 py-2">
                 <div className="h-px w-32 bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
                 <p className="text-sm text-cosmic-200/50">
-                  อยากให้ AI ตีความเพิ่มเติม?
+                  อยากให้หมอดูตีความเพิ่มเติม?
                 </p>
                 <button
                   type="button"
-                  onClick={() => setWantsAI(true)}
+                  onClick={() => setWantsFortune(true)}
                   className="btn-cosmic px-6 py-2.5 text-sm cursor-pointer"
                 >
-                  <span>🤖 ถาม AI ทำนาย</span>
+                  <span>🔮 ถามหมอดูทำนาย</span>
                 </button>
               </div>
-            ) : !characterId ? (
+            ) : !personaId ? (
               <div className="w-full">
                 <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
-                <CharacterSelector onSelect={handleMeaningsAISelect} />
+                <CharacterSelector onSelect={handleMeaningsFortuneSelect} />
               </div>
             ) : (
-              <div className="w-full">
-                <div className="mb-6 h-px w-full bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
-                <div className="w-full surface-card p-5 md:p-8">
-                  <ReadingDisplay
-                    reading={reading}
-                    isLoading={isLoading}
-                    error={error}
-                    onRetry={handleRetry}
-                    characterName={getCharacterById(characterId)?.name}
-                  />
+              <div className="w-full flex flex-col items-center gap-8">
+                <div className="w-full">
+                  <div className="mb-6 h-px w-full bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
+                  <div className="w-full surface-card p-5 md:p-8">
+                    <ReadingDisplay
+                      reading={reading}
+                      isLoading={isLoading}
+                      error={error}
+                      onRetry={handleRetry}
+                      characterName={getPersonaById(personaId)?.name}
+                    />
+                  </div>
                 </div>
+                {!isLoading && reading && (
+                  <>
+                    <FeedbackButtons readingId={readingId} />
+                    <ShareButtons readingId={readingId} />
+                  </>
+                )}
               </div>
             )}
 
-            {!(wantsAI && isLoading && !reading) && (
+            {!(wantsFortune && isLoading && !reading) && (
               <button
                 type="button"
                 onClick={handleStartOver}
@@ -314,10 +331,6 @@ function ReadingFlow() {
     </section>
   );
 }
-
-/* ═══════════════════════════════════════════════════
-   Step Indicator — adapts steps based on mode
-   ═══════════════════════════════════════════════════ */
 
 function StepIndicator({
   current,
@@ -341,11 +354,11 @@ function StepIndicator({
       { key: "reveal", label: "เปิดไพ่" },
       { key: "meanings", label: "ความหมาย" },
     ];
-  } else if (mode === "ai") {
+  } else if (mode === "fortune") {
     modeSteps = [
       { key: "mode", label: "โหมด" },
       { key: "question", label: "คำถาม" },
-      { key: "character", label: "นักพยากรณ์" },
+      { key: "character", label: "หมอดู" },
       { key: "cards", label: "เลือกไพ่" },
       { key: "reveal", label: "เปิดไพ่" },
       { key: "reading", label: "ทำนาย" },
@@ -399,10 +412,6 @@ function StepIndicator({
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   Mode Selector — the new fork in the flow
-   ═══════════════════════════════════════════════════ */
-
 function ModeSelector({
   spreadName,
   onSelect,
@@ -451,22 +460,22 @@ function ModeSelector({
 
         <button
           type="button"
-          onClick={() => onSelect("ai")}
+          onClick={() => onSelect("fortune")}
           className="group relative flex flex-col items-center gap-4 p-6 md:p-8 rounded-[var(--radius-card)] bg-cosmic-800 border border-cosmic-600 shadow-[var(--shadow-cosmic)] transition-all duration-300 hover:border-mystic-purple/50 hover:shadow-[var(--shadow-glow-purple)] hover:-translate-y-1 cursor-pointer overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-mystic-purple/5 via-transparent to-mystic-violet/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
           <span className="relative text-4xl md:text-5xl transition-transform duration-300 group-hover:scale-110">
-            🤖
+            🔮
           </span>
 
           <div className="relative flex flex-col items-center gap-2">
             <h3 className="text-lg md:text-xl font-semibold text-cosmic-100">
-              ถาม AI ทำนาย
+              ถามหมอดูทำนาย
             </h3>
             <div className="flex flex-col items-center gap-0.5 text-xs text-cosmic-200/60 leading-relaxed">
-              <span>พิมพ์คำถาม · เลือกนักพยากรณ์</span>
-              <span>ให้ AI ตีความให้</span>
+              <span>พิมพ์คำถาม · เลือกหมอดู</span>
+              <span>ให้หมอดูตีความให้</span>
             </div>
           </div>
 
@@ -478,10 +487,6 @@ function ModeSelector({
     </div>
   );
 }
-
-/* ═══════════════════════════════════════════════════
-   Card Meanings Display — static card-by-card meanings
-   ═══════════════════════════════════════════════════ */
 
 function CardMeaningsDisplay({
   cards,
@@ -517,7 +522,7 @@ function CardMeaningsDisplay({
               <div className="shrink-0">
                 <div className="relative w-[72px] h-[108px] md:w-20 md:h-[120px] rounded-lg overflow-hidden shadow-[var(--shadow-cosmic)] border border-cosmic-600/50">
                    <img
-                     src={`/cards/${card.id}.webp`}
+                     src={`/cards/classic/${card.id}.webp`}
                      alt={card.nameTh}
                      className="w-full h-full object-cover"
                    />
@@ -564,10 +569,6 @@ function CardMeaningsDisplay({
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   Spread Selector
-   ═══════════════════════════════════════════════════ */
-
 function SpreadSelector({
   onSelect,
 }: {
@@ -599,10 +600,6 @@ function SpreadSelector({
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   Question Step
-   ═══════════════════════════════════════════════════ */
-
 function QuestionStep({
   spreadName,
   question,
@@ -630,7 +627,7 @@ function QuestionStep({
         onChange={(e) => onChange(e.target.value)}
         placeholder="พิมพ์คำถามของคุณ (ไม่บังคับ)"
         rows={3}
-        className="w-full rounded-[var(--radius-card)] border border-cosmic-600 bg-cosmic-800 px-4 py-3 text-sm text-cosmic-100 placeholder:text-cosmic-200/30 focus:border-mystic-purple focus:outline-none focus:ring-1 focus:ring-mystic-purple/50 transition-colors resize-none"
+        className="w-full rounded-[var(--radius-card)] border border-cosmic-600 bg-cosmic-800 px-4 py-3 text-base text-cosmic-100 placeholder:text-cosmic-200/30 focus:border-mystic-purple focus:outline-none focus:ring-1 focus:ring-mystic-purple/50 transition-colors resize-none"
       />
 
       <button
@@ -643,10 +640,6 @@ function QuestionStep({
     </div>
   );
 }
-
-/* ═══════════════════════════════════════════════════
-   Page Export
-   ═══════════════════════════════════════════════════ */
 
 export default function ReadingPage() {
   return (

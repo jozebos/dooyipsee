@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { characters } from "@/src/data/ai-characters";
+import { personas } from "@/src/data/personas";
 
 const avatarEmojis: Record<string, string> = {
-  "dao-thep": "🌌",
   "mae-mo-jantra": "🌙",
+  "ajarn-dao-thep": "🌌",
   "nong-mystic": "⚡",
+  "khun-yai-tip": "🔮",
+  "mor-thep-digital": "💫",
 };
 
 interface CharacterSelectorProps {
-  onSelect: (characterId: string) => void;
+  onSelect: (personaId: string) => void;
 }
 
 export function CharacterSelector({ onSelect }: CharacterSelectorProps) {
@@ -24,20 +26,20 @@ export function CharacterSelector({ onSelect }: CharacterSelectorProps) {
   return (
     <div className="flex flex-col items-center gap-6">
       <h2 className="text-xl md:text-2xl font-semibold text-cosmic-100 text-center">
-        เลือกนักพยากรณ์
+        เลือกหมอดู
       </h2>
       <p className="text-sm text-cosmic-200/60 text-center -mt-2">
         แต่ละท่านมีสไตล์การทำนายที่แตกต่างกัน
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl">
-        {characters.map((char) => {
-          const isSelected = selectedId === char.id;
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-3xl">
+        {personas.map((persona) => {
+          const isSelected = selectedId === persona.id;
           return (
             <button
-              key={char.id}
+              key={persona.id}
               type="button"
-              onClick={() => handleSelect(char.id)}
+              onClick={() => handleSelect(persona.id)}
               className={`
                 relative flex flex-col items-center gap-3 p-5 md:p-6
                 rounded-[var(--radius-card)] transition-all duration-300
@@ -56,19 +58,19 @@ export function CharacterSelector({ onSelect }: CharacterSelectorProps) {
               )}
 
               <span className="text-4xl md:text-5xl">
-                {avatarEmojis[char.id] ?? "🔮"}
+                {avatarEmojis[persona.id] ?? "🔮"}
               </span>
 
               <h3 className="text-base md:text-lg font-semibold text-cosmic-100">
-                {char.name}
+                {persona.name}
               </h3>
 
               <p className="text-xs md:text-sm text-cosmic-200/70 text-center leading-relaxed">
-                {char.bio}
+                {persona.bio}
               </p>
 
               <span className="text-[11px] text-cosmic-300/50 italic text-center">
-                {char.personality.split(" ").slice(0, 4).join(" ")}
+                {persona.personality.split(" ").slice(0, 4).join(" ")}
               </span>
             </button>
           );
