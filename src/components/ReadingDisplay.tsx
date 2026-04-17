@@ -1,10 +1,84 @@
 "use client";
 
+import React from "react";
+
 interface ReadingDisplayProps {
   reading: string;
   isLoading: boolean;
   error: string | null;
   onRetry: () => void;
+  characterName?: string;
+}
+
+function renderInline(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-semibold text-cosmic-100">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
+function renderMarkdown(text: string) {
+  return text.split("\n\n").map((block, blockIdx) => {
+    // Handle ## heading
+    if (block.startsWith("## ")) {
+      return (
+        <h3
+          key={blockIdx}
+          className="mt-6 mb-3 text-lg font-semibold text-gold-400"
+        >
+          {block.slice(3)}
+        </h3>
+      );
+    }
+    // Handle ### heading
+    if (block.startsWith("### ")) {
+      return (
+        <h4
+          key={blockIdx}
+          className="mt-4 mb-2 text-base font-semibold text-cosmic-300"
+        >
+          {block.slice(4)}
+        </h4>
+      );
+    }
+    // Handle divider
+    if (block.trim() === "---") {
+      return <hr key={blockIdx} className="my-6 border-cosmic-600" />;
+    }
+    // Handle list items
+    if (
+      block
+        .split("\n")
+        .every((line) => line.match(/^[-•*]\s/) || line.trim() === "")
+    ) {
+      return (
+        <ul key={blockIdx} className="my-3 space-y-1.5 pl-4">
+          {block
+            .split("\n")
+            .filter((l) => l.trim())
+            .map((line, i) => (
+              <li key={i} className="text-cosmic-200/90 flex gap-2">
+                <span className="text-cosmic-400 shrink-0">•</span>
+                <span>{renderInline(line.replace(/^[-•*]\s*/, ""))}</span>
+              </li>
+            ))}
+        </ul>
+      );
+    }
+    // Regular paragraph
+    return (
+      <p key={blockIdx} className="my-2 leading-relaxed text-cosmic-100/90">
+        {renderInline(block.replace(/\n/g, " "))}
+      </p>
+    );
+  });
 }
 
 export function ReadingDisplay({
@@ -12,6 +86,7 @@ export function ReadingDisplay({
   isLoading,
   error,
   onRetry,
+  characterName,
 }: ReadingDisplayProps) {
   if (error) {
     return (
@@ -32,7 +107,11 @@ export function ReadingDisplay({
     return (
       <div className="flex items-center justify-center py-12">
         <span className="text-cosmic-300 text-lg animate-pulse">
-          กำลังทำนาย
+          {characterName ? (
+            <>🔮 {characterName} กำลังทำนาย</>
+          ) : (
+            <>กำลังทำนาย</>
+          )}
           <span className="inline-flex w-8 text-left">
             <LoadingDots />
           </span>
@@ -45,8 +124,15 @@ export function ReadingDisplay({
 
   return (
     <div className="prose prose-invert max-w-none">
-      <div className="whitespace-pre-wrap leading-relaxed text-cosmic-100">
-        {reading}
+      {characterName && (
+        <div className="mb-4 flex items-center gap-2 text-sm text-cosmic-300/80">
+          <span>🔮</span>
+          <span className="font-medium text-gold-400">{characterName}</span>
+          <span>ทำนายให้คุณ</span>
+        </div>
+      )}
+      <div className="leading-relaxed text-cosmic-100">
+        {renderMarkdown(reading)}
         {isLoading && <TypingCursor />}
       </div>
     </div>

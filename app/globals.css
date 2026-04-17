@@ -353,3 +353,23 @@ body {
   position: relative;
   z-index: 1;
 }
+
+/* Card fan — hover lift with CSS custom properties */
+.card-fan-item {
+  transform: rotate(var(--fan-rotate, 0deg)) translateY(var(--fan-ty, 0px));
+  transition: transform 0.3s var(--ease-cosmic);
+}
+
+.card-fan-item:hover {
+  transform: rotate(var(--fan-rotate, 0deg))
+    translateY(calc(var(--fan-ty, 0px) - 12px));
+}
+
+/* Glass morphism surface */
+.surface-glass {
+  background: rgba(18, 18, 46, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(74, 58, 138, 0.3);
+  border-radius: var(--radius-card);
+}

@@ -9,10 +9,21 @@ import type { TarotCard } from "@/src/data/tarot-cards";
 import { useReading } from "@/src/hooks/useReading";
 import { ReadingDisplay } from "@/src/components/ReadingDisplay";
 import { CharacterSelector } from "@/src/components/CharacterSelector";
+import { getCharacterById } from "@/src/data/ai-characters";
 import { CardSelector } from "@/src/components/CardSelector";
 import { SpreadLayout } from "@/src/components/SpreadLayout";
 
-type Step = "spread" | "question" | "character" | "cards" | "reveal" | "reading";
+type Step =
+  | "spread"
+  | "mode"
+  | "question"
+  | "character"
+  | "cards"
+  | "reveal"
+  | "reading"
+  | "meanings";
+
+type ReadingMode = "quick" | "ai";
 
 interface SelectedCard {
   id: string;
@@ -29,12 +40,16 @@ function ReadingFlow() {
       ? getSpreadById("three-card")
       : undefined);
 
-  const [step, setStep] = useState<Step>(resolvedSpread ? "question" : "spread");
+  const [step, setStep] = useState<Step>(resolvedSpread ? "mode" : "spread");
   const [spread, setSpread] = useState<SpreadType | undefined>(resolvedSpread);
+  const [mode, setMode] = useState<ReadingMode | null>(null);
   const [question, setQuestion] = useState("");
   const [characterId, setCharacterId] = useState("");
   const [selectedCards, setSelectedCards] = useState<SelectedCard[]>([]);
-  const [revealedIndices, setRevealedIndices] = useState<Set<number>>(new Set());
+  const [revealedIndices, setRevealedIndices] = useState<Set<number>>(
+    new Set()
+  );
+  const [wantsAI, setWantsAI] = useState(false);
 
   const { reading, isLoading, error, startReading } = useReading();
 
@@ -45,7 +60,16 @@ function ReadingFlow() {
 
   const handleSpreadSelect = useCallback((s: SpreadType) => {
     setSpread(s);
-    setStep("question");
+    setStep("mode");
+  }, []);
+
+  const handleModeSelect = useCallback((selected: ReadingMode) => {
+    setMode(selected);
+    if (selected === "quick") {
+      setStep("cards");
+    } else {
+      setStep("question");
+    }
   }, []);
 
   const handleQuestionNext = useCallback(() => {
@@ -71,23 +95,44 @@ function ReadingFlow() {
 
         if (spread && next.size === spread.cardCount) {
           setTimeout(() => {
-            setStep("reading");
-            startReading({
-              spreadType: spread.id,
-              cards: selectedCards.map((sc) => ({
-                id: sc.id,
-                position: sc.position,
-              })),
-              question: question || undefined,
-              characterId,
-            });
+            if (mode === "quick") {
+              setStep("meanings");
+            } else {
+              setStep("reading");
+              startReading({
+                spreadType: spread.id,
+                cards: selectedCards.map((sc) => ({
+                  id: sc.id,
+                  position: sc.position,
+                })),
+                question: question || undefined,
+                characterId,
+              });
+            }
           }, 800);
         }
 
         return next;
       });
     },
-    [spread, selectedCards, question, characterId, startReading]
+    [spread, selectedCards, question, characterId, startReading, mode]
+  );
+
+  const handleMeaningsAISelect = useCallback(
+    (id: string) => {
+      setCharacterId(id);
+      if (!spread) return;
+      startReading({
+        spreadType: spread.id,
+        cards: selectedCards.map((sc) => ({
+          id: sc.id,
+          position: sc.position,
+        })),
+        question: question || undefined,
+        characterId: id,
+      });
+    },
+    [spread, selectedCards, question, startReading]
   );
 
   const handleRetry = useCallback(() => {
@@ -101,19 +146,32 @@ function ReadingFlow() {
   }, [spread, selectedCards, question, characterId, startReading]);
 
   const handleStartOver = useCallback(() => {
-    setStep(resolvedSpread ? "question" : "spread");
+    setStep(resolvedSpread ? "mode" : "spread");
+    setMode(null);
     setQuestion("");
     setCharacterId("");
     setSelectedCards([]);
     setRevealedIndices(new Set());
+    setWantsAI(false);
   }, [resolvedSpread]);
 
   return (
     <section className="starfield cosmic-mesh relative min-h-[calc(100dvh-3rem)] px-4 py-10 md:py-16">
       <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center gap-8">
-        <StepIndicator current={step} hasSpread={!!resolvedSpread} />
+        <StepIndicator
+          current={step}
+          hasSpread={!!resolvedSpread}
+          mode={mode}
+        />
 
         {step === "spread" && <SpreadSelector onSelect={handleSpreadSelect} />}
+
+        {step === "mode" && spread && (
+          <ModeSelector
+            spreadName={spread.nameTh}
+            onSelect={handleModeSelect}
+          />
+        )}
 
         {step === "question" && spread && (
           <QuestionStep
@@ -124,10 +182,15 @@ function ReadingFlow() {
           />
         )}
 
-        {step === "character" && <CharacterSelector onSelect={handleCharacterSelect} />}
+        {step === "character" && (
+          <CharacterSelector onSelect={handleCharacterSelect} />
+        )}
 
         {step === "cards" && spread && (
-          <CardSelector cardCount={spread.cardCount} onCardsSelected={handleCardsSelected} />
+          <CardSelector
+            cardCount={spread.cardCount}
+            onCardsSelected={handleCardsSelected}
+          />
         )}
 
         {step === "reveal" && spread && resolvedCards.length > 0 && (
@@ -167,10 +230,76 @@ function ReadingFlow() {
                 isLoading={isLoading}
                 error={error}
                 onRetry={handleRetry}
+                characterName={getCharacterById(characterId)?.name}
               />
             </div>
 
             {!isLoading && reading && (
+              <button
+                type="button"
+                onClick={handleStartOver}
+                className="btn-cosmic px-8 py-3 text-sm cursor-pointer"
+              >
+                <span>ดูไพ่อีกครั้ง</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {step === "meanings" && spread && resolvedCards.length > 0 && (
+          <div className="flex flex-col items-center gap-8 w-full">
+            <SpreadLayout
+              cards={resolvedCards.map((card, i) => ({
+                card,
+                position: selectedCards[i].position,
+                isFlipped: true,
+              }))}
+              spreadType={spread.id}
+              onCardClick={() => {}}
+              positionLabels={spread.positions.map((p) => p.nameTh)}
+            />
+
+            <CardMeaningsDisplay
+              cards={resolvedCards}
+              selectedCards={selectedCards}
+              spread={spread}
+            />
+
+            {!wantsAI ? (
+              <div className="flex flex-col items-center gap-4 py-2">
+                <div className="h-px w-32 bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
+                <p className="text-sm text-cosmic-200/50">
+                  อยากให้ AI ตีความเพิ่มเติม?
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setWantsAI(true)}
+                  className="btn-cosmic px-6 py-2.5 text-sm cursor-pointer"
+                >
+                  <span>🤖 ถาม AI ทำนาย</span>
+                </button>
+              </div>
+            ) : !characterId ? (
+              <div className="w-full">
+                <div className="mb-8 h-px w-full bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
+                <CharacterSelector onSelect={handleMeaningsAISelect} />
+              </div>
+            ) : (
+              <div className="w-full">
+                <div className="mb-6 h-px w-full bg-gradient-to-r from-transparent via-cosmic-500/60 to-transparent" />
+                <div className="w-full surface-card p-5 md:p-8">
+                  <ReadingDisplay
+                    reading={reading}
+                    isLoading={isLoading}
+                    error={error}
+                    onRetry={handleRetry}
+                    characterName={getCharacterById(characterId)?.name}
+                  />
+                </div>
+              </div>
+            )}
+
+            {!(wantsAI && isLoading && !reading) && (
               <button
                 type="button"
                 onClick={handleStartOver}
@@ -186,30 +315,46 @@ function ReadingFlow() {
   );
 }
 
+/* ═══════════════════════════════════════════════════
+   Step Indicator — adapts steps based on mode
+   ═══════════════════════════════════════════════════ */
+
 function StepIndicator({
   current,
   hasSpread,
+  mode,
 }: {
   current: Step;
   hasSpread: boolean;
+  mode: ReadingMode | null;
 }) {
-  const steps: { key: Step; label: string }[] = hasSpread
-    ? [
-        { key: "question", label: "คำถาม" },
-        { key: "character", label: "นักพยากรณ์" },
-        { key: "cards", label: "เลือกไพ่" },
-        { key: "reveal", label: "เปิดไพ่" },
-        { key: "reading", label: "ทำนาย" },
-      ]
-    : [
-        { key: "spread", label: "รูปแบบ" },
-        { key: "question", label: "คำถาม" },
-        { key: "character", label: "นักพยากรณ์" },
-        { key: "cards", label: "เลือกไพ่" },
-        { key: "reveal", label: "เปิดไพ่" },
-        { key: "reading", label: "ทำนาย" },
-      ];
+  const prefix: { key: Step; label: string }[] = hasSpread
+    ? []
+    : [{ key: "spread", label: "รูปแบบ" }];
 
+  let modeSteps: { key: Step; label: string }[];
+
+  if (mode === "quick") {
+    modeSteps = [
+      { key: "mode", label: "โหมด" },
+      { key: "cards", label: "เลือกไพ่" },
+      { key: "reveal", label: "เปิดไพ่" },
+      { key: "meanings", label: "ความหมาย" },
+    ];
+  } else if (mode === "ai") {
+    modeSteps = [
+      { key: "mode", label: "โหมด" },
+      { key: "question", label: "คำถาม" },
+      { key: "character", label: "นักพยากรณ์" },
+      { key: "cards", label: "เลือกไพ่" },
+      { key: "reveal", label: "เปิดไพ่" },
+      { key: "reading", label: "ทำนาย" },
+    ];
+  } else {
+    modeSteps = [{ key: "mode", label: "โหมด" }];
+  }
+
+  const steps = [...prefix, ...modeSteps];
   const currentIdx = steps.findIndex((s) => s.key === current);
 
   return (
@@ -254,6 +399,175 @@ function StepIndicator({
   );
 }
 
+/* ═══════════════════════════════════════════════════
+   Mode Selector — the new fork in the flow
+   ═══════════════════════════════════════════════════ */
+
+function ModeSelector({
+  spreadName,
+  onSelect,
+}: {
+  spreadName: string;
+  onSelect: (mode: ReadingMode) => void;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-8">
+      <div className="flex flex-col items-center gap-2">
+        <span className="text-sm text-gold-400/70 font-medium">
+          {spreadName}
+        </span>
+        <h2 className="text-xl md:text-2xl font-semibold text-cosmic-100 text-center">
+          คุณอยากดูไพ่แบบไหน?
+        </h2>
+        <p className="text-sm text-cosmic-200/50">เลือกโหมดที่เหมาะกับคุณ</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full max-w-lg">
+        <button
+          type="button"
+          onClick={() => onSelect("quick")}
+          className="group relative flex flex-col items-center gap-4 p-6 md:p-8 rounded-[var(--radius-card)] bg-cosmic-800 border border-cosmic-600 shadow-[var(--shadow-cosmic)] transition-all duration-300 hover:border-gold-400/50 hover:shadow-[var(--shadow-glow-gold)] hover:-translate-y-1 cursor-pointer overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-gold-400/5 via-transparent to-gold-400/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+          <span className="relative text-4xl md:text-5xl transition-transform duration-300 group-hover:scale-110">
+            🃏
+          </span>
+
+          <div className="relative flex flex-col items-center gap-2">
+            <h3 className="text-lg md:text-xl font-semibold text-cosmic-100">
+              เปิดไพ่เฉยๆ
+            </h3>
+            <div className="flex flex-col items-center gap-0.5 text-xs text-cosmic-200/60 leading-relaxed">
+              <span>เลือกไพ่แล้วดูความหมาย</span>
+              <span>ทันที</span>
+            </div>
+          </div>
+
+          <span className="relative text-[10px] text-gold-400/50 font-medium tracking-widest">
+            รวดเร็ว · ง่ายดาย
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onSelect("ai")}
+          className="group relative flex flex-col items-center gap-4 p-6 md:p-8 rounded-[var(--radius-card)] bg-cosmic-800 border border-cosmic-600 shadow-[var(--shadow-cosmic)] transition-all duration-300 hover:border-mystic-purple/50 hover:shadow-[var(--shadow-glow-purple)] hover:-translate-y-1 cursor-pointer overflow-hidden"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-mystic-purple/5 via-transparent to-mystic-violet/3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+          <span className="relative text-4xl md:text-5xl transition-transform duration-300 group-hover:scale-110">
+            🤖
+          </span>
+
+          <div className="relative flex flex-col items-center gap-2">
+            <h3 className="text-lg md:text-xl font-semibold text-cosmic-100">
+              ถาม AI ทำนาย
+            </h3>
+            <div className="flex flex-col items-center gap-0.5 text-xs text-cosmic-200/60 leading-relaxed">
+              <span>พิมพ์คำถาม · เลือกนักพยากรณ์</span>
+              <span>ให้ AI ตีความให้</span>
+            </div>
+          </div>
+
+          <span className="relative text-[10px] text-mystic-purple/50 font-medium tracking-widest">
+            ลึกซึ้ง · ครบถ้วน
+          </span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Card Meanings Display — static card-by-card meanings
+   ═══════════════════════════════════════════════════ */
+
+function CardMeaningsDisplay({
+  cards,
+  selectedCards,
+  spread,
+}: {
+  cards: TarotCard[];
+  selectedCards: SelectedCard[];
+  spread: SpreadType;
+}) {
+  return (
+    <div className="w-full space-y-4">
+      <h2 className="text-xl md:text-2xl font-semibold text-cosmic-100 text-center mb-2">
+        ✨ ความหมายของไพ่
+      </h2>
+      <p className="text-xs text-cosmic-200/40 text-center mb-6">
+        {spread.nameTh} · {cards.length} ใบ
+      </p>
+
+      {cards.map((card, i) => {
+        const sc = selectedCards[i];
+        const pos = spread.positions[i];
+        const isUpright = sc.position === "upright";
+        const cardData = isUpright ? card.upright : card.reversed;
+
+        return (
+          <div
+            key={card.id + "-" + i}
+            className="surface-card p-5 transition-all duration-500"
+            style={{ animationDelay: `${i * 120}ms` }}
+          >
+            <div className="flex items-start gap-4">
+              <div className="shrink-0">
+                <div className="relative w-[72px] h-[108px] md:w-20 md:h-[120px] rounded-lg overflow-hidden shadow-[var(--shadow-cosmic)] border border-cosmic-600/50">
+                  <img
+                    src={`/cards/${card.id}.png`}
+                    alt={card.nameTh}
+                    className="w-full h-full object-cover"
+                  />
+                  {!isUpright && (
+                    <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[9px] font-medium text-red-300/90 bg-red-900/70 px-1.5 py-px rounded-full backdrop-blur-sm">
+                      กลับด้าน
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <span className="text-[11px] text-gold-400/80 font-medium">
+                  {pos.nameTh}
+                </span>
+                <h3 className="text-base md:text-lg font-semibold text-cosmic-100 mt-0.5 leading-tight">
+                  {card.nameTh}
+                </h3>
+                <span className="text-[11px] text-cosmic-300/70">
+                  {card.nameEn} ·{" "}
+                  {isUpright ? "🔼 หัวตั้ง" : "🔽 หัวกลับ"}
+                </span>
+
+                <div className="mt-2.5 flex gap-1.5 flex-wrap">
+                  {cardData.keywords.map((kw) => (
+                    <span
+                      key={kw}
+                      className="rounded-full bg-cosmic-700/80 border border-cosmic-600/50 px-2.5 py-0.5 text-[11px] text-cosmic-200/90"
+                    >
+                      {kw}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="mt-3 text-sm leading-relaxed text-cosmic-200/70">
+                  {cardData.meaning}
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════
+   Spread Selector
+   ═══════════════════════════════════════════════════ */
+
 function SpreadSelector({
   onSelect,
 }: {
@@ -285,6 +599,10 @@ function SpreadSelector({
   );
 }
 
+/* ═══════════════════════════════════════════════════
+   Question Step
+   ═══════════════════════════════════════════════════ */
+
 function QuestionStep({
   spreadName,
   question,
@@ -299,7 +617,9 @@ function QuestionStep({
   return (
     <div className="flex flex-col items-center gap-6 w-full max-w-md">
       <div className="flex flex-col items-center gap-2">
-        <span className="text-sm text-gold-400/70 font-medium">{spreadName}</span>
+        <span className="text-sm text-gold-400/70 font-medium">
+          {spreadName}
+        </span>
         <h2 className="text-xl md:text-2xl font-semibold text-cosmic-100 text-center">
           ตั้งคำถาม
         </h2>
@@ -324,12 +644,18 @@ function QuestionStep({
   );
 }
 
+/* ═══════════════════════════════════════════════════
+   Page Export
+   ═══════════════════════════════════════════════════ */
+
 export default function ReadingPage() {
   return (
     <Suspense
       fallback={
         <div className="flex min-h-[60dvh] items-center justify-center">
-          <span className="text-cosmic-300 animate-pulse text-lg">กำลังโหลด...</span>
+          <span className="text-cosmic-300 animate-pulse text-lg">
+            กำลังโหลด...
+          </span>
         </div>
       }
     >

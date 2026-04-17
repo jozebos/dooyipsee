@@ -5,6 +5,7 @@ export interface BlogPost {
   content: string;
   publishedAt: string;
   readingTime: number;
+  imagePath?: string;
 }
 
 export const blogPosts: BlogPost[] = [

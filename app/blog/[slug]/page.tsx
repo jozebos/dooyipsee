@@ -1,21 +1,10 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-
-const posts = [
-  { slug: "what-is-tarot", title: "ไพ่ทาโร่คืออะไร", excerpt: "ทำความรู้จักกับไพ่ทาโร่ ประวัติความเป็นมา และความหมายเบื้องต้น", readingTime: 3, publishedAt: "2026-01-15" },
-  { slug: "tarot-for-beginners", title: "วิธีดูไพ่ทาโร่สำหรับมือใหม่", excerpt: "เรียนรู้วิธีดูไพ่ทาโร่เบื้องต้น ตั้งแต่การเลือกสำรับไพ่ไปจนถึงการตีความ", readingTime: 4, publishedAt: "2026-01-20" },
-  { slug: "major-arcana-meanings", title: "ไพ่ Major Arcana 22 ใบ", excerpt: "ความหมายของไพ่ Major Arcana ทั้ง 22 ใบ ตั้งแต่ The Fool ถึง The World", readingTime: 8, publishedAt: "2026-02-01" },
-  { slug: "minor-arcana-wands", title: "ไพ่ชุดไม้เท้า (Wands)", excerpt: "ความหมายของไพ่ Minor Arcana ชุดไม้เท้า ธาตุไฟ แห่งความหลงใหล", readingTime: 5, publishedAt: "2026-02-10" },
-  { slug: "minor-arcana-cups", title: "ไพ่ชุดถ้วย (Cups)", excerpt: "ความหมายของไพ่ Minor Arcana ชุดถ้วย ธาตุน้ำ แห่งอารมณ์", readingTime: 5, publishedAt: "2026-02-15" },
-  { slug: "minor-arcana-swords", title: "ไพ่ชุดดาบ (Swords)", excerpt: "ความหมายของไพ่ Minor Arcana ชุดดาบ ธาตุลม แห่งปัญญา", readingTime: 5, publishedAt: "2026-02-20" },
-  { slug: "minor-arcana-pentacles", title: "ไพ่ชุดเหรียญ (Pentacles)", excerpt: "ความหมายของไพ่ Minor Arcana ชุดเหรียญ ธาตุดิน แห่งวัตถุ", readingTime: 5, publishedAt: "2026-02-25" },
-  { slug: "three-card-spread", title: "การเปิดไพ่ 3 ใบ", excerpt: "เรียนรู้วิธีเปิดไพ่ 3 ใบ อดีต ปัจจุบัน อนาคต แบบละเอียด", readingTime: 4, publishedAt: "2026-03-01" },
-  { slug: "celtic-cross-guide", title: "การเปิดไพ่ Celtic Cross", excerpt: "คู่มือการเปิดไพ่ Celtic Cross 10 ใบ แบบละเอียดทุกตำแหน่ง", readingTime: 6, publishedAt: "2026-03-10" },
-  { slug: "ai-and-tarot", title: "ดูดวงด้วย AI", excerpt: "เทคโนโลยี AI กับศาสตร์การดูไพ่โบราณ ผสมผสานอย่างลงตัว", readingTime: 3, publishedAt: "2026-03-15" },
-];
+import { getAllBlogPosts, getBlogPostBySlug } from "@/src/data/blog-posts";
 
 export function generateStaticParams() {
-  return posts.map((post) => ({ slug: post.slug }));
+  return getAllBlogPosts().map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({
@@ -24,7 +13,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = posts.find((p) => p.slug === slug);
+  const post = getBlogPostBySlug(slug);
   if (!post) return {};
 
   const title = `${post.title} — บทความไพ่ทาโร่`;
@@ -44,13 +33,66 @@ export async function generateMetadata({
   };
 }
 
+function BlogHeroImage({
+  imagePath,
+  title,
+}: {
+  imagePath?: string;
+  title: string;
+}) {
+  if (imagePath) {
+    return (
+      <div className="relative mb-8 aspect-[2/1] w-full overflow-hidden rounded-xl">
+        <Image
+          src={imagePath}
+          alt={title}
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mb-8 flex aspect-[2.5/1] w-full items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-cosmic-800 via-cosmic-700 to-cosmic-900">
+      <span className="text-5xl opacity-30">🔮</span>
+    </div>
+  );
+}
+
+function BlogContent({ content }: { content: string }) {
+  return (
+    <div className="prose-cosmic space-y-4">
+      {content.split("\n\n").map((paragraph, i) => {
+        if (paragraph.trim().startsWith("<img")) {
+          return (
+            <figure key={i} className="my-6">
+              <div
+                className="overflow-hidden rounded-lg"
+                dangerouslySetInnerHTML={{ __html: paragraph.trim() }}
+              />
+            </figure>
+          );
+        }
+
+        return (
+          <p key={i} className="leading-relaxed text-cosmic-200/80">
+            {paragraph}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
 export default async function BlogPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = posts.find((p) => p.slug === slug);
+  const post = getBlogPostBySlug(slug);
   if (!post) {
     return null;
   }
@@ -117,12 +159,10 @@ export default async function BlogPostPage({
           </div>
         </header>
 
+        <BlogHeroImage imagePath={post.imagePath} title={post.title} />
+
         <div className="surface-card p-5 sm:p-8">
-          <div className="prose-cosmic space-y-4">
-            <p className="leading-relaxed text-cosmic-200/80">
-              บทความนี้กำลังจะเผยแพร่ในเร็วๆ นี้
-            </p>
-          </div>
+          <BlogContent content={post.content} />
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
