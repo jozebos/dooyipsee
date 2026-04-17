@@ -88,12 +88,12 @@ export default async function CardDetailPage({
     description: card.upright.meaning,
     author: {
       "@type": "Organization",
-      name: "ดูอิปซี",
+      name: "ดูยิปซี",
       url: "https://dooyipsee.com",
     },
     publisher: {
       "@type": "Organization",
-      name: "ดูอิปซี",
+      name: "ดูยิปซี",
       url: "https://dooyipsee.com",
     },
     mainEntityOfPage: `https://dooyipsee.com/cards/${card.slug}`,
@@ -130,20 +130,12 @@ export default async function CardDetailPage({
 
         <header className="mb-8 sm:mb-10">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:gap-8">
-            <div
-              className={`flex aspect-[2/3] w-40 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${suitColor} ring-1 ring-white/10 sm:w-48`}
-            >
-              <span className="text-5xl font-bold text-white/20 sm:text-6xl">
-                {card.arcana === "major"
-                  ? "✦"
-                  : card.suit === "wands"
-                    ? "🜂"
-                    : card.suit === "cups"
-                      ? "🜄"
-                      : card.suit === "swords"
-                        ? "🜁"
-                        : "🜃"}
-              </span>
+            <div className="w-40 shrink-0 sm:w-48">
+              <img
+                src={`/cards/${card.id}.png`}
+                alt={card.nameTh}
+                className="w-full aspect-[2/3] object-cover rounded-xl ring-1 ring-white/10"
+              />
             </div>
 
             <div className="text-center sm:text-left">

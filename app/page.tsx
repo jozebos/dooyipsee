@@ -37,15 +37,16 @@ export default function Home() {
       {/* ── Hero ── */}
       <section className="starfield cosmic-mesh relative flex min-h-[85dvh] flex-col items-center justify-center px-4 text-center">
         <div className="relative z-10 flex flex-col items-center gap-6">
-          <div className="animate-float relative flex h-28 w-28 items-center justify-center rounded-full bg-cosmic-800/60 ring-1 ring-cosmic-500/40 sm:h-36 sm:w-36">
-            <div className="absolute inset-2 rounded-full bg-gradient-to-br from-mystic-purple/30 to-mystic-indigo/20" />
-            <span className="relative text-5xl sm:text-6xl" role="img" aria-label="ลูกแก้ว">
-              🔮
-            </span>
+          <div className="animate-float relative">
+            <img
+              src="/cards/mascot.png"
+              alt="ดูยิปซี มาสคอต"
+              className="w-32 h-32 sm:w-40 sm:h-40 mx-auto drop-shadow-[0_0_20px_rgba(139,92,246,0.3)]"
+            />
           </div>
 
           <h1 className="text-glow text-5xl font-bold tracking-tight text-cosmic-100 sm:text-6xl md:text-7xl">
-            ดูอิปซี
+            ดูยิปซี
           </h1>
 
           <p className="max-w-md text-lg font-light text-cosmic-200 sm:text-xl">
@@ -110,7 +111,7 @@ export default function Home() {
       <section className="border-t border-cosmic-800/50 bg-cosmic-850/50 px-4 py-20 sm:py-28">
         <div className="mx-auto max-w-5xl">
           <h2 className="mb-10 text-center text-2xl font-semibold text-cosmic-100 sm:mb-14 sm:text-3xl">
-            ทำไมต้องดูอิปซี?
+            ทำไมต้องดูยิปซี?
           </h2>
 
           <div className="grid grid-cols-2 gap-5 sm:grid-cols-4 sm:gap-6">

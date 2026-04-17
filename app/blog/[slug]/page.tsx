@@ -63,12 +63,12 @@ export default async function BlogPostPage({
     datePublished: post.publishedAt,
     author: {
       "@type": "Organization",
-      name: "ดูอิปซี",
+      name: "ดูยิปซี",
       url: "https://dooyipsee.com",
     },
     publisher: {
       "@type": "Organization",
-      name: "ดูอิปซี",
+      name: "ดูยิปซี",
       url: "https://dooyipsee.com",
     },
     mainEntityOfPage: `https://dooyipsee.com/blog/${post.slug}`,

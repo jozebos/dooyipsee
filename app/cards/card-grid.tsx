@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 interface CardItem {
+  id: string;
   slug: string;
   nameTh: string;
   nameEn: string;
@@ -38,13 +39,12 @@ function CardTile({ card }: { card: CardItem }) {
       href={`/cards/${card.slug}`}
       className="surface-card group flex flex-col items-center gap-2 p-3 text-center transition-all duration-300 hover:-translate-y-1 sm:gap-3 sm:p-4"
     >
-      <div
-        className={`flex aspect-[2/3] w-full items-center justify-center rounded-lg bg-gradient-to-br ${card.suitColor}`}
-      >
-        <span className="text-2xl font-bold text-white/30 sm:text-3xl">
-          {card.arcana === "major" ? "✦" : card.suit === "wands" ? "🜂" : card.suit === "cups" ? "🜄" : card.suit === "swords" ? "🜁" : "🜃"}
-        </span>
-      </div>
+      <img
+        src={`/cards/${card.id}.png`}
+        alt={card.nameTh}
+        loading="lazy"
+        className="w-full aspect-[2/3] object-cover rounded-lg"
+      />
       <p className="line-clamp-2 text-xs font-medium leading-tight text-cosmic-100 group-hover:text-gold-400 transition-colors sm:text-sm">
         {card.nameTh}
       </p>

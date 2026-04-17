@@ -57,6 +57,7 @@ export default function CardsPage() {
   ];
 
   const allCardsData = getAllCards().map((card) => ({
+    id: card.id,
     slug: card.slug,
     nameTh: card.nameTh,
     nameEn: card.nameEn,
@@ -69,6 +70,7 @@ export default function CardsPage() {
     key: section.key,
     label: section.label,
     cards: section.cards.map((card) => ({
+      id: card.id,
       slug: card.slug,
       nameTh: card.nameTh,
       nameEn: card.nameEn,

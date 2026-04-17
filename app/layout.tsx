@@ -13,8 +13,8 @@ const notoSansThai = Noto_Sans_Thai({
 export const metadata: Metadata = {
   metadataBase: new URL("https://dooyipsee.com"),
   title: {
-    template: "%s | ดูอิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี",
-    default: "ดูอิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายด้วย AI",
+    template: "%s | ดูยิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี",
+    default: "ดูยิปซี — ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายด้วย AI",
   },
   description:
     "ดูไพ่ยิปซีออนไลน์ ฟรี ทำนายด้วย AI ไพ่ทาโร่ 78 ใบ เลือกไพ่เอง สุ่มไพ่ ดูดวงรายวัน อดีต ปัจจุบัน อนาคต เซลติกครอส",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "th_TH",
-    siteName: "ดูอิปซี",
+    siteName: "ดูยิปซี",
     url: "https://dooyipsee.com",
   },
   twitter: {
@@ -52,7 +52,7 @@ export default function RootLayout({
               href="/"
               className="text-lg font-bold tracking-tight text-cosmic-300 transition-colors hover:text-cosmic-200"
             >
-              ดูอิปซี
+              ดูยิปซี
             </Link>
 
             <div className="flex items-center gap-5 text-sm font-medium">
@@ -76,7 +76,7 @@ export default function RootLayout({
 
         <footer className="border-t border-cosmic-800/60 mt-20">
           <div className="mx-auto max-w-5xl px-4 py-8 text-center text-sm text-cosmic-200/50">
-            <p>© 2025 ดูอิปซี — dooyipsee.com</p>
+            <p>© 2025 ดูยิปซี — dooyipsee.com</p>
             <p className="mt-1.5 text-xs text-cosmic-200/30">
               เพื่อความบันเทิงเท่านั้น ไม่ใช่คำแนะนำทางจิตวิทยาหรือการแพทย์
             </p>

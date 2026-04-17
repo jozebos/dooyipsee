@@ -1,4 +1,4 @@
-// Tarot card data for ดูอิปซี่ (Dooyipsee)
+// Tarot card data for ดูยิปซี (Dooyipsee)
 
 export type Arcana = "major" | "minor";
 export type Suit = "wands" | "cups" | "swords" | "pentacles";
