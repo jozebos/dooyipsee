@@ -1,0 +1,115 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - link "ดูยิปซี" [ref=e4] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e5]:
+        - link "ไพ่ 78 ใบ" [ref=e6] [cursor=pointer]:
+          - /url: /cards
+        - link "บทความ" [ref=e7] [cursor=pointer]:
+          - /url: /blog
+  - main [ref=e8]:
+    - article [ref=e9]:
+      - img "ไพ่ทาโร่คืออะไร? ทำความรู้จักไพ่ยิปซีฉบับเข้าใจง่าย" [ref=e12]
+      - generic [ref=e13]:
+        - navigation "breadcrumb" [ref=e14]:
+          - link "หน้าแรก" [ref=e15] [cursor=pointer]:
+            - /url: /
+          - generic [ref=e16]: /
+          - link "บทความ" [ref=e17] [cursor=pointer]:
+            - /url: /blog
+          - generic [ref=e18]: /
+          - generic [ref=e19]: ไพ่ทาโร่คืออะไร? ทำความรู้จักไพ่ยิปซีฉบับเข้าใจง่าย
+        - heading "ไพ่ทาโร่คืออะไร? ทำความรู้จักไพ่ยิปซีฉบับเข้าใจง่าย" [level=1] [ref=e20]
+        - generic [ref=e21]:
+          - generic [ref=e22]:
+            - img [ref=e23]
+            - time [ref=e25]: 15 มกราคม 2568
+          - generic [ref=e26]:
+            - img [ref=e27]
+            - text: อ่าน 6 นาที
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - separator [ref=e32]
+          - heading "ไพ่ทาโร่คืออะไร?" [level=2] [ref=e33]
+        - paragraph [ref=e34]:
+          - text: ไพ่ทาโร่ (
+          - strong [ref=e35]: Tarot
+          - text: ) เป็นเครื่องมือโบราณที่ใช้ในการทำนายและสำรวจจิตใต้สำนึก มีต้นกำเนิดในยุโรปช่วงศตวรรษที่ 15 โดยเริ่มจากเกมไพ่ในแคว้นอิตาลีตอนเหนือ ก่อนจะแพร่หลายไปทั่วยุโรปและพัฒนามาเป็นเครื่องมือทำนายในเวลาต่อมา ชื่อ "
+          - strong [ref=e36]: Tarot
+          - text: "\" มีรากศัพท์จากภาษาอิตาลีว่า \""
+          - strong [ref=e37]: Tarocchi
+          - text: "\" ซึ่งเป็นชื่อเกมไพ่ที่นิยมเล่นกันในหมู่ชนชั้นสูง"
+        - generic [ref=e38]:
+          - separator [ref=e39]
+          - heading "โครงสร้างของสำรับไพ่ทาโร่" [level=2] [ref=e40]
+        - paragraph [ref=e41]:
+          - text: สำรับไพ่ทาโร่มาตรฐานมี 78 ใบ แบ่งเป็น 2 กลุ่มหลัก ได้แก่
+          - strong [ref=e42]: Major Arcana
+          - text: 22 ใบ ซึ่งเป็นไพ่หลักที่แสดงถึงเหตุการณ์สำคัญและบทเรียนชีวิต เริ่มจาก
+          - strong [ref=e43]: The Fool
+          - text: (หมายเลข 0) ไปจนถึง
+          - strong [ref=e44]: The World
+          - text: (หมายเลข 21) และ
+          - strong [ref=e45]: Minor Arcana
+          - text: 56 ใบ ที่แบ่งเป็น 4 ชุด ได้แก่ ไม้เท้า (
+          - strong [ref=e46]: Wands
+          - text: ) ถ้วย (
+          - strong [ref=e47]: Cups
+          - text: ) ดาบ (
+          - strong [ref=e48]: Swords
+          - text: ) และเหรียญ (
+          - strong [ref=e49]: Pentacles
+          - text: )
+        - generic [ref=e50]:
+          - separator [ref=e51]
+          - heading "Minor Arcana — ไพ่รอง 56 ใบ" [level=2] [ref=e52]:
+            - strong [ref=e53]: Minor Arcana
+            - text: — ไพ่รอง 56 ใบ
+        - paragraph [ref=e54]:
+          - text: ไพ่ทาโร่แตกต่างจากไพ่ป๊อกตรงที่มีไพ่
+          - strong [ref=e55]: Major Arcana
+          - text: เพิ่มเข้ามา และแต่ละชุดของ
+          - strong [ref=e56]: Minor Arcana
+          - text: มี
+          - strong [ref=e57]: Court Cards
+          - text: 4 ใบ (
+          - strong [ref=e58]: Page
+          - text: ","
+          - strong [ref=e59]: Knight
+          - text: ","
+          - strong [ref=e60]: Queen
+          - text: ","
+          - strong [ref=e61]: King
+          - text: ) แทนที่จะเป็น 3 ใบอย่างไพ่ป๊อก นอกจากนี้ภาพวาดบนไพ่ทาโร่ยังเต็มไปด้วยสัญลักษณ์ที่มีความหมายลึกซึ้ง ไม่ใช่แค่ตัวเลขและสัญลักษณ์ชุดเท่านั้น
+        - generic [ref=e62]:
+          - separator [ref=e63]
+          - heading "ทำไมคนไทยเรียก \"ไพ่ยิปซี\"?" [level=2] [ref=e64]
+        - paragraph [ref=e65]: คนไทยมักเรียกไพ่ทาโร่ว่า "ไพ่ยิปซี" เพราะเชื่อกันว่าชาวยิปซีเป็นผู้นำไพ่ชนิดนี้แพร่หลายไปทั่วยุโรป แม้ว่าในทางประวัติศาสตร์จะยังไม่มีหลักฐานยืนยันชัดเจน แต่ชาวยิปซีก็มีบทบาทสำคัญในการทำให้การอ่านไพ่เป็นที่รู้จักในวงกว้าง จนกลายเป็นภาพจำที่ผูกพันกันมาจนถึงปัจจุบัน
+        - generic [ref=e66]:
+          - separator [ref=e67]
+          - heading "การอ่านไพ่ทาโร่คืออะไรกันแน่?" [level=2] [ref=e68]
+        - paragraph [ref=e69]: ในยุคสมัยใหม่ ไพ่ทาโร่ถูกใช้งานหลากหลายรูปแบบ ตั้งแต่การทำนายดวงชะตา การให้คำปรึกษาเชิงจิตวิทยา ไปจนถึงการใช้เป็นเครื่องมือสำรวจตัวเอง (Self-reflection) หลายคนใช้ไพ่ทาโร่เป็นส่วนหนึ่งของการทำสมาธิหรือการเขียนบันทึกประจำวัน เพื่อกระตุ้นความคิดและมุมมองใหม่ๆ
+        - generic [ref=e70]:
+          - separator [ref=e71]
+          - heading "ดูไพ่ออนไลน์ในยุคดิจิทัล" [level=2] [ref=e72]
+        - paragraph [ref=e73]: การอ่านไพ่ทาโร่ไม่ใช่การทำนายอนาคตแบบตายตัว แต่เป็นการสะท้อนพลังงานและแนวโน้มในปัจจุบัน ช่วยให้เราเข้าใจสถานการณ์และตัดสินใจได้ดีขึ้น ไม่จำเป็นต้องมีพลังพิเศษ ทุกคนสามารถเรียนรู้ได้ สิ่งสำคัญคือการเปิดใจ ฝึกฝนสม่ำเสมอ และใช้สัญชาตญาณของตัวเองในการตีความ
+        - paragraph [ref=e74]:
+          - text: สำรับไพ่ที่ได้รับความนิยมมากที่สุดคือ
+          - strong [ref=e75]: Rider-Waite
+          - text: "-Smith ซึ่งออกแบบโดย Pamela Colman Smith ในปี ค.ศ. 1909 ภาพวาดในสำรับนี้เข้าใจง่ายและเป็นต้นแบบให้กับสำรับอื่นๆ อีกมากมาย ปัจจุบันมีสำรับไพ่ทาโร่ให้เลือกหลายพันแบบ ตั้งแต่สไตล์คลาสสิกไปจนถึงสไตล์ร่วมสมัย"
+      - generic [ref=e77]:
+        - paragraph [ref=e78]: 🔮 อยากลองดูไพ่?
+        - paragraph [ref=e79]: เปิดไพ่ทาโร่ออนไลน์ ฟรี ให้หมอดูตีความให้
+        - generic [ref=e80]:
+          - link "ไพ่ประจำวัน" [ref=e81] [cursor=pointer]:
+            - /url: /reading?spread=daily-card
+          - link "ดูไพ่แบบอื่น" [ref=e82] [cursor=pointer]:
+            - /url: /reading
+      - link "← กลับไปดูบทความทั้งหมด" [ref=e84] [cursor=pointer]:
+        - /url: /blog
+  - contentinfo [ref=e85]:
+    - generic [ref=e86]:
+      - paragraph [ref=e87]: © 2025 ดูยิปซี — dooyipsee.com
+      - paragraph [ref=e88]: เพื่อความบันเทิงเท่านั้น ไม่ใช่คำแนะนำทางจิตวิทยาหรือการแพทย์
+  - alert [ref=e89]
