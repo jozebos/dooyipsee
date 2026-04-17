@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "บทความ",
   description: "บทความเกี่ยวกับไพ่ทาโร่ วิธีดูไพ่ ความหมายไพ่ และเทคนิคการตีความ",
+  alternates: { canonical: "/blog" },
 };
 
 // Inline blog data for now (will be moved to data file later)

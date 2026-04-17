@@ -18,6 +18,7 @@ export const metadata: Metadata = {
     "ไพ่ยิปซี",
     "ไพ่ทาโร่ 78 ใบ",
   ],
+  alternates: { canonical: "/cards" },
 };
 
 const SUIT_COLOR_MAP: Record<string, string> = {

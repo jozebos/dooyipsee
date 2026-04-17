@@ -30,6 +30,7 @@ export async function generateMetadata({
       publishedTime: post.publishedAt,
       images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
     },
+    alternates: { canonical: `/blog/${post.slug}` },
   };
 }
 
